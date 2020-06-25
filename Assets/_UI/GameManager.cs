@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager thisManager;
     public enum GameState {  GameOver, GameStart, GameIdle};
     public static GameState CurrentState = GameState.GameIdle;
 
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        thisManager = this;
         Lives = 3;
         Score = 0;
         Time.timeScale = 0;
@@ -27,7 +29,12 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 1;
             HUD.HUDManager.DismissMessage();
         }
-
+        if(CurrentState == GameState.GameStart && Lives == 0)
+        {
+            CurrentState = GameState.GameOver;
+            Time.timeScale = 0;
+            HUD.HUDManager.GameOver();
+        }
         else if(CurrentState == GameState.GameOver && Input.GetKeyDown(KeyCode.Return))
         {
             SceneManager.LoadScene(0);
